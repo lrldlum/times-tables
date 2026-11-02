@@ -27,17 +27,22 @@ const $=id=>document.getElementById(id);let a,b,correct,tries,left,tick,running=
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let shown=0;const LS=k=>+localStorage.getItem('tt_'+k)||0;
 function showRec(){const f=LS('fast');$('records').textContent=`🏆 Best round: ${LS('best')} right · ⚡ Fastest answer: ${f?(f/1000).toFixed(1)+'s':'none yet'} · 🧮 All-time: ${LS('total')} right`}
-function next(){shown=Date.now();a=1+Math.floor(Math.random()*12);b=1+Math.floor(Math.random()*12);$('problem').textContent=`${a} × ${b}`}
+function next(){shown=Date.now();a=1+Math.floor(Math.random()*12);b=1+Math.floor(Math.random()*12);$('problem').textContent=`${a} × ${b}`;$('ans')&&($('ans').value='');if(running&&window.restartMic)setTimeout(window.restartMic,60)}
 function check(n){if(!running||n===null)return;tries++;
 if(n===a*b){correct++;const ms=Date.now()-shown;if(!LS('fast')||ms<LS('fast'))localStorage.setItem('tt_fast',ms);localStorage.setItem('tt_total',LS('total')+1);showRec();$('cheer').textContent=['🎉','🌟','👏','🥳','💯'][Math.floor(Math.random()*5)];$('problem').classList.add('ok');
 setTimeout(()=>{$('problem').classList.remove('ok');$('cheer').textContent='';next();$('heard').textContent='';setTimeout(()=>{window.gate=false},250)},400)}
 else{$('cheer').textContent='🤔 Try again!'}$('score').textContent=`⭐ ${correct} / ${tries}`}
-function listen(){if(!SR)return;rec=new SR();rec.lang='en-US';rec.continuous=true;rec.interimResults=true;let lastQ='';
-rec.onresult=e=>{if(window.gate)return;const ix=e.results.length-1;const r=e.results[ix];let t=r[0].transcript;if(ix===window.uIdx){const u=window.uTxt||'';t=t.startsWith(u)?t.slice(u.length):'';if(!t.trim())return}$('heard').textContent='I heard: "'+t+'"';const n=toNum(t);const q=a+'x'+b;
-if(n===a*b&&lastQ!==q){lastQ=q;window.gate=true;window.uIdx=e.results.length-1;window.uTxt=r[0].transcript;check(n)}else if(r.isFinal&&lastQ!==q){check(n)}};
-rec.onerror=e=>{const m={'not-allowed':'🎙️ Mic blocked. Click the lock/🎙️ icon in the address bar, choose Allow, then Play Again.','service-not-allowed':'🎙️ Edge blocks voice on files opened from disk. Open it from a web link (http://localhost) instead, or type answers below.','network':'🌐 Edge voice needs internet. Check your connection, or type answers below.','audio-capture':'🎙️ No microphone found. Plug one in or type answers below.'};
-if(e.error==='no-speech'||e.error==='aborted')return;$('heard').textContent=m[e.error]||('Voice error: '+e.error+'. Type answers below.');$('typed').style.display='block';if(e.error!=='network')running&&(rec.onend=null)};
-rec.onend=()=>{window.uIdx=-1;if(running&&rec.onend)setTimeout(()=>{try{rec.start()}catch(_){}},150)};try{rec.start()}catch(err){$('heard').textContent='Could not start voice: '+err.message;$('typed').style.display='block'}}
+function listen(){if(!SR)return;let q0='',wd=null,gen=0;
+const M={'not-allowed':'🎙️ Mic blocked. Allow the microphone, then Play Again. You can type answers below.','service-not-allowed':'🎙️ Voice is blocked here. Type answers below.','audio-capture':'🎙️ No microphone found. Type answers below.'};
+function fresh(){if(!running)return;const my=++gen;try{rec&&(rec.onend=null,rec.onresult=null,rec.onerror=null,rec.abort())}catch(_){}
+rec=new SR();rec.lang='en-US';rec.continuous=false;rec.interimResults=true;rec.maxAlternatives=1;q0=a+'x'+b;let done=false;
+rec.onresult=e=>{if(my!==gen||done)return;let t='';for(let k=0;k<e.results.length;k++)t+=e.results[k][0].transcript;$('heard').textContent='I heard: "'+t+'"';const n=toNum(t);const fin=e.results[e.results.length-1].isFinal;
+if(q0!==a+'x'+b)return;if(n===a*b){done=true;check(n);}else if(fin){done=true;check(n);setTimeout(fresh,150)}};
+rec.onerror=e=>{if(my!==gen)return;if(M[e.error]){running&&(gen++);$('heard').textContent=M[e.error];return}};
+rec.onend=()=>{if(my!==gen||!running)return;if(!done)setTimeout(fresh,120)};
+clearTimeout(wd);wd=setTimeout(()=>{if(my===gen&&!done)fresh()},7000);
+try{rec.start()}catch(err){setTimeout(fresh,400)}}
+window.restartMic=fresh;fresh()}
 async function start(){
 if(SR&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){try{$('heard').textContent='Asking for the microphone... click Allow!';const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(t=>t.stop())}
 catch(err){$('heard').textContent=(location.protocol==='file:'?'🎙️ Edge won\'t allow the mic on a file opened from disk. Run it from http://localhost (see note below), or type your answers.':'🎙️ Mic permission denied. Click the lock icon in the address bar, Allow microphone, then try again.');$('typed').style.display='block'}}correct=0;tries=0;left=120;running=true;$('start').style.display='none';$('score').textContent='⭐ 0 / 0';$('timer').textContent='⏱️ 120';
