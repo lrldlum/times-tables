@@ -30,8 +30,9 @@ function check(n){if(!running||n===null)return;tries++;
 if(n===a*b){correct++;$('cheer').textContent=['🎉','🌟','👏','🥳','💯'][Math.floor(Math.random()*5)];$('problem').classList.add('ok');
 setTimeout(()=>{$('problem').classList.remove('ok');$('cheer').textContent='';next()},400)}
 else{$('cheer').textContent='🤔 Try again!'}$('score').textContent=`⭐ ${correct} / ${tries}`}
-function listen(){if(!SR)return;rec=new SR();rec.lang='en-US';rec.continuous=true;rec.interimResults=false;
-rec.onresult=e=>{const t=e.results[e.results.length-1][0].transcript;$('heard').textContent='I heard: "'+t+'"';check(toNum(t))};
+function listen(){if(!SR)return;rec=new SR();rec.lang='en-US';rec.continuous=true;rec.interimResults=true;let lastQ='';
+rec.onresult=e=>{const r=e.results[e.results.length-1];const t=r[0].transcript;$('heard').textContent='I heard: "'+t+'"';const n=toNum(t);const q=a+'x'+b;
+if(n===a*b&&lastQ!==q){lastQ=q;check(n)}else if(r.isFinal&&lastQ!==q){check(n)}};
 rec.onerror=e=>{const m={'not-allowed':'🎙️ Mic blocked. Click the lock/🎙️ icon in the address bar, choose Allow, then Play Again.','service-not-allowed':'🎙️ Edge blocks voice on files opened from disk. Open it from a web link (http://localhost) instead, or type answers below.','network':'🌐 Edge voice needs internet. Check your connection, or type answers below.','audio-capture':'🎙️ No microphone found. Plug one in or type answers below.'};
 if(e.error==='no-speech'||e.error==='aborted')return;$('heard').textContent=m[e.error]||('Voice error: '+e.error+'. Type answers below.');$('typed').style.display='block';if(e.error!=='network')running&&(rec.onend=null)};
 rec.onend=()=>{if(running&&rec.onend)try{rec.start()}catch(_){}};try{rec.start()}catch(err){$('heard').textContent='Could not start voice: '+err.message;$('typed').style.display='block'}}
