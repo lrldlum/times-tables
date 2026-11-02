@@ -11,7 +11,7 @@ h1{color:#ff5e9c;margin:0 0 10px}
 button{font-size:26px;padding:14px 34px;border:none;border-radius:50px;background:#2ecc71;color:#fff;cursor:pointer;margin:10px}
 button:hover{background:#27ae60}#cheer{font-size:40px;min-height:50px}
 input{font-size:24px;width:120px;text-align:center;border-radius:12px;border:2px solid #4a6cf7}
-</style></head><body><div class="card">
+</style></head><body><div id="installTip" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#4a6cf7;color:#fff;padding:14px;font-size:17px;text-align:center;z-index:9">📲 To install: tap <b>Share</b> <span style="font-size:20px">⎋↑</span> at the bottom of Safari, scroll down, tap <b>Add to Home Screen</b>, then <b>Add</b>. <span onclick="this.parentNode.remove()" style="margin-left:10px">✖</span></div><div class="card">
 <h1>🎤 Times Table Talk!</h1>
 <div id="timer">⏱️ 120</div><div id="score">⭐ 0 / 0</div>
 <div id="records" style="font-size:16px;color:#8e44ad"></div><div id="problem">Ready?</div><div id="cheer"></div>
@@ -48,4 +48,4 @@ $('cheer').textContent=correct>=15?'🏆':correct>=8?'🌟':'👍';$('heard').te
 $('start').textContent='🔁 Play Again';$('start').style.display='inline-block';$('typed').style.display='none'}
 $('start').onclick=start;showRec();$('go').onclick=()=>{check(+$('ans').value);$('ans').value=''};
 $('ans').onkeydown=e=>{if(e.key==='Enter')$('go').click()};
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script></body></html>
+if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))$('installTip').style.display='block';if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script></body></html>
