@@ -16,7 +16,7 @@ input{font-size:24px;width:120px;text-align:center;border-radius:12px;border:2px
 <div id="timer">⏱️ 120</div><div id="score">⭐ 0 / 0</div>
 <div id="records" style="font-size:16px;color:#8e44ad"></div><div id="problem">Ready?</div><div id="cheer"></div>
 <div id="heard">Press Start and say your answer out loud!</div>
-<div id="typed" style="display:none"><input id="ans" type="number"><button id="go">✔</button></div>
+<div id="typed" style="display:none"><input id="ans" type="number" inputmode="numeric" style="font-size:28px;width:120px"><button id="go">✔</button></div>
 <button id="start">▶️ Start</button>
 <p style="font-size:13px;color:#999">Mic not working in Edge? In this folder run <b>python -m http.server 8000</b>, then open <b>http://localhost:8000/times-tables.html</b>. Voice needs internet. Chrome works too.</p></div>
 <script>
@@ -41,7 +41,7 @@ rec.onend=()=>{window.uIdx=-1;if(running&&rec.onend)setTimeout(()=>{try{rec.star
 async function start(){
 if(SR&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){try{$('heard').textContent='Asking for the microphone... click Allow!';const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(t=>t.stop())}
 catch(err){$('heard').textContent=(location.protocol==='file:'?'🎙️ Edge won\'t allow the mic on a file opened from disk. Run it from http://localhost (see note below), or type your answers.':'🎙️ Mic permission denied. Click the lock icon in the address bar, Allow microphone, then try again.');$('typed').style.display='block'}}correct=0;tries=0;left=120;running=true;$('start').style.display='none';$('score').textContent='⭐ 0 / 0';$('timer').textContent='⏱️ 120';
-if(!SR){$('heard').textContent='Voice not supported here, so type your answer!';$('typed').style.display='block'}else $('heard').textContent='Say your answer!';
+if(!SR){$('heard').textContent='Voice not supported here, so type your answer!';$('typed').style.display='block'}else{$('heard').textContent='Say your answer, or type it below!';$('typed').style.display='block'}
 next();listen();tick=setInterval(()=>{left--;$('timer').textContent='⏱️ '+left;if(left<=0)stop()},1000)}
 function stop(){running=false;let nb=correct>LS('best');if(nb)localStorage.setItem('tt_best',correct);showRec();clearInterval(tick);if(rec)rec.stop();$('problem').textContent='⏰ Time!';
 $('cheer').textContent=correct>=15?'🏆':correct>=8?'🌟':'👍';$('heard').textContent=`You got ${correct} right out of ${tries} tries!`+(nb?' 🎊 NEW RECORD!':'');
