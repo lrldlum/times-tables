@@ -13,7 +13,7 @@ button:hover{background:#27ae60}#cheer{font-size:40px;min-height:50px}
 input{font-size:24px;width:120px;text-align:center;border-radius:12px;border:2px solid #4a6cf7}
 </style></head><body><div class="card">
 <h1>🎤 Times Table Talk!</h1>
-<div id="timer">⏱️ 60</div><div id="score">⭐ 0 / 0</div>
+<div id="timer">⏱️ 120</div><div id="score">⭐ 0 / 0</div>
 <div id="problem">Ready?</div><div id="cheer"></div>
 <div id="heard">Press Start and say your answer out loud!</div>
 <div id="typed" style="display:none"><input id="ans" type="number"><button id="go">✔</button></div>
@@ -38,7 +38,7 @@ if(e.error==='no-speech'||e.error==='aborted')return;$('heard').textContent=m[e.
 rec.onend=()=>{if(running&&rec.onend)try{rec.start()}catch(_){}};try{rec.start()}catch(err){$('heard').textContent='Could not start voice: '+err.message;$('typed').style.display='block'}}
 async function start(){
 if(SR&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){try{$('heard').textContent='Asking for the microphone... click Allow!';const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(t=>t.stop())}
-catch(err){$('heard').textContent=(location.protocol==='file:'?'🎙️ Edge won\'t allow the mic on a file opened from disk. Run it from http://localhost (see note below), or type your answers.':'🎙️ Mic permission denied. Click the lock icon in the address bar, Allow microphone, then try again.');$('typed').style.display='block'}}correct=0;tries=0;left=60;running=true;$('start').style.display='none';$('score').textContent='⭐ 0 / 0';$('timer').textContent='⏱️ 60';
+catch(err){$('heard').textContent=(location.protocol==='file:'?'🎙️ Edge won\'t allow the mic on a file opened from disk. Run it from http://localhost (see note below), or type your answers.':'🎙️ Mic permission denied. Click the lock icon in the address bar, Allow microphone, then try again.');$('typed').style.display='block'}}correct=0;tries=0;left=120;running=true;$('start').style.display='none';$('score').textContent='⭐ 0 / 0';$('timer').textContent='⏱️ 120';
 if(!SR){$('heard').textContent='Voice not supported here, so type your answer!';$('typed').style.display='block'}else $('heard').textContent='Say your answer!';
 next();listen();tick=setInterval(()=>{left--;$('timer').textContent='⏱️ '+left;if(left<=0)stop()},1000)}
 function stop(){running=false;clearInterval(tick);if(rec)rec.stop();$('problem').textContent='⏰ Time!';
