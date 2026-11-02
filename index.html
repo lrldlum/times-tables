@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Times Table Talk!</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Times Tables"><title>Times Table Talk!</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 body{margin:0;font-family:"Comic Sans MS",Arial,sans-serif;background:linear-gradient(135deg,#ffd36e,#ff7eb3,#7ec8ff);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#333}
@@ -48,4 +48,4 @@ $('cheer').textContent=correct>=15?'🏆':correct>=8?'🌟':'👍';$('heard').te
 $('start').textContent='🔁 Play Again';$('start').style.display='inline-block';$('typed').style.display='none'}
 $('start').onclick=start;showRec();$('go').onclick=()=>{check(+$('ans').value);$('ans').value=''};
 $('ans').onkeydown=e=>{if(e.key==='Enter')$('go').click()};
-</script></body></html>
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script></body></html>

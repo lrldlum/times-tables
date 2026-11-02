@@ -1,0 +1,1 @@
+{"name": "Times Table Talk", "short_name": "Times Tables", "start_url": "./", "display": "standalone", "background_color": "#ffd36e", "theme_color": "#ff7eb3", "icons": [{"src": "icon180.png", "sizes": "180x180", "type": "image/png"}, {"src": "icon512.png", "sizes": "512x512", "type": "image/png"}]}
